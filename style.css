@@ -1,0 +1,56 @@
+* {
+	box-sizing: border-box;
+}
+
+.locations {
+	border: 0.5px solid #888;
+	width: 256px;
+	height: 256px;
+	position: relative;
+
+	cursor: crosshair;
+}
+
+.locations > .zoom {
+	width: 20px;
+	height: 20px;
+	border: 1px solid #555;
+	position: absolute;
+	right: 5px;
+	bottom: 5px;
+}
+
+.locations > .zoom-in {
+	bottom: 24px;
+}
+.locations > .zoom-in {
+	border-bottom: none;
+}
+
+.locations > *:after {
+	text-align: center;
+	display: block;
+	font-weight: bold;
+	position: relative;
+	top: -1px;
+}
+
+.locations > .zoom-in:after {
+	content: '+';
+}
+
+.locations > .zoom-out:after {
+	content: '–';
+}
+
+.location {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 5px;
+	height: 5px;
+	border-radius: 2.5px;
+	transform: translate(-50%, -50%);
+	background: rgba(0, 120, 255, 0.3);
+}
+
