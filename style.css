@@ -2,32 +2,55 @@
 	box-sizing: border-box;
 }
 
-.locations {
-	border: 0.5px solid #888;
-	width: 256px;
-	height: 256px;
-	position: relative;
-
-	cursor: crosshair;
+body {
+	border: 1px dashed;
 }
 
-.locations > .zoom {
+.map {
+	border: 1px solid #888;
+	width: 256px;
+	height: 256px;
+
+	cursor: crosshair;
+	overflow: hidden;
+
+	position: relative;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.map > .zoom {
 	width: 20px;
 	height: 20px;
 	border: 1px solid #555;
 	position: absolute;
 	right: 5px;
 	bottom: 5px;
+	cursor: pointer;
+	background: rgba(255, 255, 255, 0.8);
 }
 
-.locations > .zoom-in {
+.map > .zoom-in {
 	bottom: 24px;
-}
-.locations > .zoom-in {
 	border-bottom: none;
 }
 
-.locations > *:after {
+.map > .zoom-out {
+	border-top: none;
+}
+
+.map > .zoom-out::before {
+	display: block;
+	content: '';
+
+	position: absolute;
+	width: 80%;
+	left: 10%;
+	height: 1px;
+	background: #d4d4d4;
+}
+
+.map > .zoom::after {
 	text-align: center;
 	display: block;
 	font-weight: bold;
@@ -35,18 +58,18 @@
 	top: -1px;
 }
 
-.locations > .zoom-in:after {
+.map > .zoom-in::after {
 	content: '+';
 }
 
-.locations > .zoom-out:after {
+.map > .zoom-out::after {
 	content: '–';
 }
 
-.location {
+.marker {
 	position: absolute;
-	left: 0px;
-	top: 0px;
+	left: 0;
+	top: 0;
 	width: 5px;
 	height: 5px;
 	border-radius: 2.5px;

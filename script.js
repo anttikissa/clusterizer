@@ -10,9 +10,9 @@ log(coordinatePairs);
 var el = redom.el;
 var mount = redom.mount;
 
-class Location {
+class Marker {
 	constructor() {
-		this.el = el('.location');
+		this.el = el('.marker');
 	}
 
 	update({ id, x, y }) {
@@ -29,17 +29,25 @@ function relativePos(el, click) {
 	return { x, y };
 }
 
-class Locations {
+class Map {
+	get zoomLevel() {
+		return this._zoomLevel;
+	}
+
+	set zoomLevel(value) {
+		this._zoomLevel = Math.max(0, Math.min(21, value));
+	}
+
 	constructor() {
-		this.list = redom.list('div', Location);
-		this.el = el('div.locations', this.list,
+		this.el = el('div.map',
+			this.list = redom.list('div.markers', Marker),
 			this.zoomIn = el('div.zoom.zoom-in'),
 			this.zoomOut = el('div.zoom.zoom-out')
 		);
 
 		this.x = 128;
 		this.y = 128;
-		this.zoomLevel = 0;
+		this._zoomLevel = 0;
 
 		this.el.onclick = (ev) => {
 			var click = relativePos(this.el, ev);
@@ -50,23 +58,17 @@ class Locations {
 			this.x = this.x + screenCoordinateMultiplier * (click.x - 128);
 			this.y = this.y + screenCoordinateMultiplier * (click.y - 128);
 			this.zoomLevel++;
-			if (this.zoomLevel > 21)
-				this.zoomLevel = 21;
 			this.update(this.coordinatePairs);
 		};
 
 		this.zoomIn.onclick = (ev) => {
 			this.zoomLevel++;
-			if (this.zoomLevel > 21)
-				this.zoomLevel = 21;
 			ev.stopPropagation();
 			this.render();
 		};
 
 		this.zoomOut.onclick = (ev) => {
 			this.zoomLevel--;
-			if (this.zoomLevel < 0)
-				this.zoomLevel = 0;
 			ev.stopPropagation();
 			this.render();
 		};
@@ -104,7 +106,7 @@ class Locations {
 
 }
 
-var locations = new Locations;
+var locations = new Map;
 locations.update(coordinatePairs);
 mount(document.body, locations);
 
