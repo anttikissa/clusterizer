@@ -6,21 +6,17 @@ var coordinatePairs = locationsCsv.split('\n')
 .map(line => line.split(','))
 .map(([ id, lat, long ]) => ({ id, lat, long }));
 
-coordinatePairs = coordinatePairs.slice(0, 300);
+// Just a small selection, for now
+coordinatePairs = coordinatePairs.slice(0, 200);
 
-log(coordinatePairs);
-
-var el = redom.el;
-var mount = redom.mount;
+const { el, list, mount } = redom;
 
 class Marker {
 	constructor() {
 		this.el = el('.marker');
-		log('New marker');
 	}
 
 	update({ id, x, y }) {
-		log('Marker update');
 		this.el.style.left = x + 'px';
 		this.el.style.top = y + 'px';
 	}
@@ -46,7 +42,7 @@ class Map {
 	constructor() {
 		this.el = el('.map',
 			this.markers = el('.markers'),
-			this.list = redom.list(this.markers, Marker, 'id'),
+			this.list = list(this.markers, Marker, 'id'),
 			this.zoomIn = el('.zoom.zoom-in'),
 			this.zoomOut = el('.zoom.zoom-out'),
 			this.debug = el('.debug',
@@ -58,8 +54,57 @@ class Map {
 		this.x = 128;
 		this.y = 128;
 		this.zoomLevel = 0;
+		this.dragStartPos = null;
 
+		// Drag handling
+		this.markers.onmousedown = (ev) => {
+			this.dragStartPos = relativePos(this.el, ev);
+
+			window.addEventListener('mouseup', (ev) => {
+				var finalPos = relativePos(this.el, ev);
+				if (!this.dragStartPos)
+					return;
+
+				var diff = {
+					x: finalPos.x - this.dragStartPos.x,
+					y: finalPos.y - this.dragStartPos.y
+				};
+
+				if (Math.abs(diff.x) + Math.abs(diff.y) < 3) {
+					this.dragStartPos = null;
+					return;
+				}
+
+				var screenCoordinateMultiplier = Math.pow(0.5, this.zoomLevel);
+				this.markers.classList.add('disable-transition');
+				this.markers.style.left = this.markers.style.top = 0;
+				this.x = this.x - screenCoordinateMultiplier * diff.x;
+				this.y = this.y - screenCoordinateMultiplier * diff.y;
+				this.render();
+
+				// A hacky way to disable mousemove handler after drag has ended
+				this.dragStartPos = 'ended';
+				// Prevent click event from happening
+				setTimeout(() => {
+					this.markers.classList.remove('disable-transition');
+					this.dragStartPos = null;
+				});
+			}, { once: true });
+		};
+
+		this.markers.onmousemove = (ev) => {
+			if (this.dragStartPos && typeof this.dragStartPos === 'object') {
+				var newPos = relativePos(this.el, ev);
+				this.markers.style.left = (newPos.x - this.dragStartPos.x) + 'px';
+				this.markers.style.top = (newPos.y - this.dragStartPos.y) + 'px';
+			}
+		};
+
+		// Click to zoom
 		this.el.onclick = (ev) => {
+			if (this.dragStartPos)
+				return;
+
 			var click = relativePos(this.el, ev);
 
 			var screenCoordinateMultiplier = Math.pow(0.5, this.zoomLevel);
@@ -76,7 +121,7 @@ class Map {
 			this.x = this.x - screenCoordinateMultiplier * (click.x - 128);
 			this.y = this.y - screenCoordinateMultiplier * (click.y - 128);
 
-			this.update(this.coordinatePairs);
+			this.render();
 		};
 
 		this.zoomIn.onclick = (ev) => {
@@ -90,7 +135,6 @@ class Map {
 			ev.stopPropagation();
 			this.render();
 		};
-
 	}
 
 	render() {
@@ -103,8 +147,8 @@ class Map {
 		this.list.update(processed);
 
 		this.debugZoomLevel.textContent = 'zoom ' + this._zoomLevel;
-		this.debugX.textContent = 'x ' + this.x;
-		this.debugY.textContent = 'y ' + this.y;
+		this.debugX.textContent = 'x ' + this.x.toFixed(6);
+		this.debugY.textContent = 'y ' + this.y.toFixed(6);
 	}
 
 	process(coordinatePairs, zoomLevel) {
