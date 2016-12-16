@@ -62,7 +62,7 @@ class Map {
 
 			const mouseup = (ev) => {
 				var finalPos = relativePos(this.el, ev);
-				if (!this.dragStartPos)
+				if (typeof this.dragStartPos !== 'object')
 					return;
 
 				var diff = {
