@@ -4,7 +4,10 @@ var locationsElement = document.querySelector('#locations');
 var locationsCsv = locationsElement.innerText.trim();
 var coordinatePairs = locationsCsv.split('\n')
 .map(line => line.split(','))
-.map(([ id, lat, long ]) => ({ id, lat, long }))
+.map(([ id, lat, long ]) => ({ id, lat, long }));
+
+coordinatePairs = coordinatePairs.slice(0, 300);
+
 log(coordinatePairs);
 
 var el = redom.el;
@@ -13,9 +16,11 @@ var mount = redom.mount;
 class Marker {
 	constructor() {
 		this.el = el('.marker');
+		log('New marker');
 	}
 
 	update({ id, x, y }) {
+		log('Marker update');
 		this.el.style.left = x + 'px';
 		this.el.style.top = y + 'px';
 	}
@@ -39,25 +44,38 @@ class Map {
 	}
 
 	constructor() {
-		this.el = el('div.map',
-			this.list = redom.list('div.markers', Marker),
-			this.zoomIn = el('div.zoom.zoom-in'),
-			this.zoomOut = el('div.zoom.zoom-out')
+		this.el = el('.map',
+			this.markers = el('.markers'),
+			this.list = redom.list(this.markers, Marker, 'id'),
+			this.zoomIn = el('.zoom.zoom-in'),
+			this.zoomOut = el('.zoom.zoom-out'),
+			this.debug = el('.debug',
+				this.debugX = el('.x'),
+				this.debugY = el('.y'),
+				this.debugZoomLevel = el('.zoomLevel'))
 		);
 
 		this.x = 128;
 		this.y = 128;
-		this._zoomLevel = 0;
+		this.zoomLevel = 0;
 
 		this.el.onclick = (ev) => {
 			var click = relativePos(this.el, ev);
 
 			var screenCoordinateMultiplier = Math.pow(0.5, this.zoomLevel);
-			// Whoops, this should be so that the position that the user clicked
-			// stays in place
+
+			// This brings (x, y) to the position that was clicked
 			this.x = this.x + screenCoordinateMultiplier * (click.x - 128);
 			this.y = this.y + screenCoordinateMultiplier * (click.y - 128);
+
 			this.zoomLevel++;
+
+			// But we want to adjust it so that the clicked position stays in place
+			// So do a back-adjustment with the new screenCoordinateMultiplier
+			screenCoordinateMultiplier = Math.pow(0.5, this.zoomLevel);
+			this.x = this.x - screenCoordinateMultiplier * (click.x - 128);
+			this.y = this.y - screenCoordinateMultiplier * (click.y - 128);
+
 			this.update(this.coordinatePairs);
 		};
 
@@ -72,6 +90,7 @@ class Map {
 			ev.stopPropagation();
 			this.render();
 		};
+
 	}
 
 	render() {
@@ -79,10 +98,13 @@ class Map {
 	}
 
 	update(coordinatePairs) {
-		log('Zoom level', this.zoomLevel);
 		this.coordinatePairs = coordinatePairs;
 		var processed = this.process(this.coordinatePairs, this.zoomLevel);
 		this.list.update(processed);
+
+		this.debugZoomLevel.textContent = 'zoom ' + this._zoomLevel;
+		this.debugX.textContent = 'x ' + this.x;
+		this.debugY.textContent = 'y ' + this.y;
 	}
 
 	process(coordinatePairs, zoomLevel) {

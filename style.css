@@ -75,5 +75,17 @@ body {
 	border-radius: 2.5px;
 	transform: translate(-50%, -50%);
 	background: rgba(0, 120, 255, 0.3);
+
+	transition: 0.1s left, 0.1s top;
 }
 
+.map > .debug {
+	position: absolute;
+	bottom: 5px;
+	left: 5px;
+	/*border: 1px dotted;*/
+	font-family: 'Source Code Pro', Inconsolata, Monaco, sans-serif;
+	font-size: 12px;
+	user-select: none;
+	background: rgba(255, 255, 255, 0.8);
+}
