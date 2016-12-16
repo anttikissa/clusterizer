@@ -60,7 +60,7 @@ class Map {
 		this.markers.onmousedown = (ev) => {
 			this.dragStartPos = relativePos(this.el, ev);
 
-			window.addEventListener('mouseup', (ev) => {
+			const mouseup = (ev) => {
 				var finalPos = relativePos(this.el, ev);
 				if (!this.dragStartPos)
 					return;
@@ -74,6 +74,9 @@ class Map {
 					this.dragStartPos = null;
 					return;
 				}
+
+				window.removeEventListener('mouseup', mouseup);
+				window.removeEventListener('mousemove', mousemove);
 
 				var screenCoordinateMultiplier = Math.pow(0.5, this.zoomLevel);
 				this.markers.classList.add('disable-transition');
@@ -89,15 +92,18 @@ class Map {
 					this.markers.classList.remove('disable-transition');
 					this.dragStartPos = null;
 				});
-			}, { once: true });
-		};
+			};
 
-		this.markers.onmousemove = (ev) => {
-			if (this.dragStartPos && typeof this.dragStartPos === 'object') {
-				var newPos = relativePos(this.el, ev);
-				this.markers.style.left = (newPos.x - this.dragStartPos.x) + 'px';
-				this.markers.style.top = (newPos.y - this.dragStartPos.y) + 'px';
-			}
+			const mousemove = (ev) => {
+				if (this.dragStartPos && typeof this.dragStartPos === 'object') {
+					var newPos = relativePos(this.el, ev);
+					this.markers.style.left = (newPos.x - this.dragStartPos.x) + 'px';
+					this.markers.style.top = (newPos.y - this.dragStartPos.y) + 'px';
+				}
+			};
+
+			window.addEventListener('mouseup', mouseup);
+			window.addEventListener('mousemove', mousemove);
 		};
 
 		// Click to zoom
