@@ -1,3 +1,5 @@
+import { clusterize } from './clusterizer';
+
 window.log = console.log;
 
 var locationsElement = document.querySelector('#locations');
@@ -7,7 +9,7 @@ var coordinatePairs = locationsCsv.split('\n')
 .map(([ id, lat, long ]) => ({ id, lat, long }));
 
 // Just a small selection, for now
-coordinatePairs = coordinatePairs.slice(0, 200);
+coordinatePairs = coordinatePairs.slice(0, 20);
 
 const { el, list, mount } = redom;
 
@@ -179,8 +181,8 @@ class Map {
 
 var initialPos = {
 	x: 145.734,
-	y: 74.074,
-	zoomLevel: 8
+	y: 74.092,
+	zoomLevel: 11
 };
 
 var map = new Map;

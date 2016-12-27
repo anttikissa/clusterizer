@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "chokidar": "^1.6.1",
+    "rollup": "^0.38.0"
+  }
+}

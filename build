@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd $(dirname $0)
+
+rollup -i app/main.js -o script.js && echo "Built script.js"

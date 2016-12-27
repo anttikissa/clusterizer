@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+var chokidar = require('chokidar');
+
+process.cwd(__dirname);
+
+function exec(cmd, args) {
+	var child = require('child_process').spawn(cmd, args || []);
+	child.stdout.pipe(process.stdout);
+	child.stderr.pipe(process.stderr);
+}
+
+function build() {
+	exec('./build');
+}
+
+build();
+
+chokidar.watch('app/**/*.js')
+	.on('change', build)
+	.on('unlink', build);
