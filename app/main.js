@@ -9,7 +9,7 @@ var coordinatePairs = locationsCsv.split('\n')
 .map(([ id, lat, long ]) => ({ id, lat, long }));
 
 // Just a small selection, for now
-coordinatePairs = coordinatePairs.slice(0, 20);
+coordinatePairs = coordinatePairs.slice(0, 50);
 
 const { el, list, mount } = redom;
 
@@ -196,7 +196,7 @@ class Map {
 	}
 
 	process(pos, coordinatePairs) {
-		return coordinatePairs.map(({ id, lat, long }) => {
+		var result = coordinatePairs.map(({ id, lat, long }) => {
 			var zoom = Math.pow(2, pos.zoomLevel);
 			var lambda = long / 180 * Math.PI;
 			var x = 128 / Math.PI * (lambda + Math.PI) - pos.x;
@@ -212,13 +212,20 @@ class Map {
 				y: y + 128
 			};
 		});
+
+		result = result.filter(({ x, y }) => {
+			return x < 256;
+		});
+
+		// log('coordinate pairs', JSON.stringify(result, null, 2));
+		return result;
 	}
 }
 
 var initialPos = {
 	x: 145.734,
 	y: 74.092,
-	zoomLevel: 11
+	zoomLevel: 12
 };
 
 var map = new Map;
