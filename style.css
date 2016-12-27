@@ -81,6 +81,7 @@ body {
 
 .map > .markers.disable-transition > .marker {
 	transition: none;
+    /*background: red;*/
 }
 
 .map > .markers {
