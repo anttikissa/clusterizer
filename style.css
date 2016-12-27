@@ -70,14 +70,45 @@ body {
 	position: absolute;
 	left: 0;
 	top: 0;
-	width: 5px;
-	height: 5px;
-	border-radius: 2.5px;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
 	transform: translate(-50%, -50%);
 	background: rgba(0, 120, 255, 0.3);
 
 	transition: 0.1s left, 0.1s top;
+	cursor: crosshair;
+
 }
+
+.map > .markers > .marker.hover {
+	background: red;
+	z-index: 100;
+}
+
+.map > .markers > .marker > .popover {
+	border: 1px solid;
+	padding: 5px;
+	width: 80px;
+	font-size: 10px;
+	font-family: 'Source Code Pro', Inconsolata, Monaco, sans-serif;
+
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	transform: translate(calc(-50% + 2.5px), -10px);
+	background: rgba(255, 255, 255, 0.5);
+	pointer-events: none;
+
+	white-space: pre;
+	opacity: 0;
+	transition: 0.1s opacity;
+}
+
+.map > .markers > .marker.hover > .popover {
+	opacity: 1;
+}
+
 
 .map > .markers.disable-transition > .marker {
 	transition: none;

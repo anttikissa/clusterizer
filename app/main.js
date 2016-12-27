@@ -14,11 +14,47 @@ coordinatePairs = coordinatePairs.slice(0, 20);
 const { el, list, mount } = redom;
 
 class Marker {
-	constructor() {
-		this.el = el('.marker');
+	get weight() {
+		return this.data && this.data.weight || 1;
 	}
 
-	update({ id, x, y }) {
+	constructor() {
+		this.el = el('.marker');
+		this.el.onmouseover = () => {
+			if (!this.data)
+				return;
+
+			function format(number) {
+				return number.toFixed(3);
+			}
+
+			var x = format(this.data.x);
+			var y = format(this.data.y);
+
+			this.el.classList.add('hover');
+
+			this.el.append(
+				this.popover = el('.popover',
+					`id: ${this.data.id}\nweight: ${this.weight}\nx: ${x}\ny: ${y}`));
+
+			this.popover.addEventListener('transitionend', () => {
+				if (this.popover) {
+					this.el.removeChild(this.popover);
+					this.popover = null;
+				}
+			});
+		};
+
+		this.el.onmouseout = () => {
+			if (!this.data)
+				return;
+
+			this.el.classList.remove('hover');
+		};
+	}
+
+	update(data) {
+		var { id, x, y } = this.data = data;
 		this.el.style.left = x + 'px';
 		this.el.style.top = y + 'px';
 	}
