@@ -82,7 +82,7 @@ body {
 	transform: translate(-50%, -50%);
 	background: rgba(0, 120, 255, 0.3);
 
-	/*transition: 0.1s left, 0.1s top;*/
+	transition: 0.5s left, 0.5s top;
 	cursor: crosshair;
 
 }
@@ -100,9 +100,9 @@ body {
 	font-family: 'Source Code Pro', Inconsolata, Monaco, sans-serif;
 
 	position: absolute;
-	bottom: 0;
+	bottom: 10px;
 	left: 0;
-	transform: translate(calc(-50% + 2.5px), -10px);
+	transform: translate(calc(-50% + 2.5px));
 	background: rgba(255, 255, 255, 0.5);
 	pointer-events: none;
 
@@ -111,13 +111,18 @@ body {
 	transition: 0.1s opacity;
 }
 
+.map > .markers > .marker > .popover.below {
+	top: 10px;
+	bottom: initial;
+}
+
 .map > .markers > .marker.hover > .popover {
 	opacity: 1;
 }
 
 
 .map > .markers.disable-transition > .marker {
-	transition: none;
+	/*transition: none;*/
     /*background: red;*/
 }
 

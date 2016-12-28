@@ -6,7 +6,9 @@ var locationsElement = document.querySelector('#locations');
 var locationsCsv = locationsElement.innerText.trim();
 var coordinatePairs = locationsCsv.split('\n')
 .map(line => line.split(','))
-.map(([ id, lat, long ]) => ({ id, lat, long }));
+.map(([ id, lat, long ]) => ({
+	id: Number(id), lat: Number(lat), long: Number(long)
+}));
 
 // Just a small selection, for now
 coordinatePairs = coordinatePairs.slice(0, 50);
