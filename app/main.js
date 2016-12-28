@@ -11,7 +11,7 @@ var coordinatePairs = locationsCsv.split('\n')
 }));
 
 // Just a small selection, for now
-coordinatePairs = coordinatePairs.slice(0, 50);
+// coordinatePairs = coordinatePairs.slice(0, 50);
 
 const { el, list, mount } = redom;
 
@@ -20,7 +20,21 @@ class Marker {
 		return this.data && this.data.weight || 1;
 	}
 
+	mounted() {
+		log('mount', this.data);
+	}
+
+	remounted() {
+		log('remount', this.data);
+	}
+
+	unmounted() {
+		log('remount', this.data);
+	}
+
 	constructor() {
+		log('create');
+
 		this.el = el('.marker');
 		this.el.onmouseover = () => {
 			if (!this.data)
@@ -215,9 +229,9 @@ class Map {
 			};
 		});
 
-		result = result.filter(({ x, y }) => {
-			return x < 256;
-		});
+		// result = result.filter(({ x, y }) => {
+		// 	return x < 256;
+		// });
 
 		// log('coordinate pairs', JSON.stringify(result, null, 2));
 		return result;
